@@ -10,12 +10,20 @@
     <div class="col-md-4">
         <h4 class="text-primary">Menu Düzenleme Sayfası</h4>
         <form asp-action="Edit" enctype="multipart/form-data">
+            @*enctype="multipart/form-data" çok parçalı veri(multi-part data) formatında verileri sunucuya göndermesini sağlar
+                dosya yükleme işlemleri için gereklidir
+            *@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @*asp-validation-summary foem doğrulama hatalarını topluca göstermek için kullanılır 
+                model only dediği içinsadece model doğrulama hatsaı için kullanılır
+            *@
             <input type="hidden" asp-for="Id" />
+            @*asp-for bir HTML elemanını bir modele bağlamak için kullanılır*@
             <div class="form-group">
                 Başlık
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
+                @*asp-validation-for form doğrulama hatalarını kullanıcıya göstermek için kullanılır. *@
             </div>
             <div class="form-group">
                 Açıklama
@@ -42,6 +50,15 @@
             <div class="form-group">
                 Kategori
                 <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                @*asp-items="ViewBag.CategoryId" select listesi için verileri dinamik hale getirmek için kullanılır 
+                    ViewBag ise controllerdan view'a veri göndermek içi kullanılır
+
+                *@
+                @* asp-items="ViewBag.CategoryId"  select (açılır menü) öğesine dinamik veri eklemek için kullanılır
+                asp-items özelliği, bir listeyi veya koleksiyonu HTML select öğesine bağlar. Burada ViewBag.CategoryId ile veriler aktarılmaktadır.
+                ViewBag, controller'dan gelen geçici veri taşıma aracıdır. 
+                Bu kod, ViewBag.CategoryId'deki verilerin kategori listesi açılır menüde seçim seçenekleri olarak gösterilmesini sağlar.*@
+                @*asp-for özelliği, modeldeki CategoryId özelliğine bağlanır. Bu, HTML form elemanının, modelin CategoryId özelliğiyle ilişkili olduğunu belirti*@
             </div>
             <div class="form-group">
                 <input type="submit" value="Guncelle" class="btn btn-success" />

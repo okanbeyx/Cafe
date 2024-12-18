@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Cafe.Models.Menu>
+﻿@model IEnumerable<Cafe.Models.Menu> /* koleksyion veritipinde ya da liste  menü nesnelerinden oluşan model alır Ienumerble veitabanından birden fazla kaynak alır*/
+
 
 @{
     ViewData["Title"] = "Index";
@@ -7,27 +8,27 @@
 
 <div class="container">
     <p>
-        <a asp-action="Create" class="btn btn-primary">Menü Ekle</a>
+        <a asp-action="Create" class="btn btn-primary">Menü Ekle</a> @* create adlı aksiyon metodunun çalıştırılmasını sağlar*@
     </p>
     <table class="table table-bordered table-striped" id="myTable">
         <thead>
             <tr>
                 <th>
-                   Resim
+                    Resim
                 </th>
                 <th>
-                   Başlık
+                    Başlık
                 </th>
-                <th style ="text-align: left;">
-                   Fiyat
-                </th>
-                <th>
-                   Özel
+                <th style="text-align: left;">
+                    Fiyat
                 </th>
                 <th>
-                   Kategori
+                    Özel
                 </th>
-               
+                <th>
+                    Kategori
+                </th>
+
                 <th></th>
             </tr>
         </thead>
@@ -36,22 +37,24 @@
             {
                 <tr>
                     <td>
-                        @if(item.Image==null)
+                        @if (item.Image == null)
                         {
-                            <img src="~/Site/images/no-image.png" width="100" height="80"/>
+                            <img src="~/Site/images/no-image.png" width="100" height="80" />
                         }
                         else
                         {
-                            <img src="@item.Image" width="100" height="80"/>
+                            <img src="@item.Image" width="100" height="80" />
                         }
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Title)
+                        @Html.DisplayFor(modelItem => item.Title) @* kullanıcıya menü öğesinin başlığını gösterir*@
                     </td>
                     <td style="text-align: left;">
-                        @Html.DisplayFor(modelItem => item.Price)
+                        @Html.DisplayFor(modelItem => item.Price) @* kullanıcıya fiyat gösterir
+
+                    *@
                     </td>
-                  
+
                     <td>
                         @if (item.Ozel)
                         {
@@ -62,12 +65,15 @@
                             <button class="btn btn-danger btn-sm"><i class="bi bi-x-circle"></i> Hayır</button>
                         }
                     </td>
-                  
+
                     <td>
                         @Html.DisplayFor(modelItem => item.Category.Name)
                     </td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-success btn-sm"><i class="bi bi-pencil"></i></a> |
+                        @*asp-action edit  edit aksiyon metoduna yönlendiren bir bağlantı oluşturur
+                    asp-route-id="@item.Id" menü öğresinin ıd si URL parametresi olarak aktarılır
+                    *@
 
                         <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
                     </td>
@@ -81,11 +87,9 @@
         $(document).ready(function () {
             $('#myTable').DataTable({
                 "language": {
-                    "url":"//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Turkish.json"
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Turkish.json"
                 }
             });
         });
     </script>
 }
-
-

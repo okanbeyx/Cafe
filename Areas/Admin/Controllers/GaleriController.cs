@@ -61,32 +61,39 @@ namespace Cafe.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Galeri galeri)
+        public async Task<IActionResult> Create(Galeri galeri)// senkronize ir biçimde çalışır Iactionresult ile viewa döndürür Galeriden galeri nesnesini çektirdik
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid)//model doğrulama doğru ise
             {
-                var files = HttpContext.Request.Form.Files;
-                if (files.Count > 0)
+                var files = HttpContext.Request.Form.Files; //kullanıcın yüklediği dosyaları alır
+                if (files.Count > 0)//en az 1 dosya yüklenmiş ise
                 {
-                    var fileName = Guid.NewGuid().ToString();
-                    var uploads = Path.Combine(_he.WebRootPath, @"Site\menu");
-                    var ext = Path.GetExtension(files[0].FileName);
-                    if (galeri.Image != null)
+                    var fileName = Guid.NewGuid().ToString(); //rastgele benzersiz  dosya adı oluşturur
+                    var uploads = Path.Combine(_he.WebRootPath, @"Site\menu");//yükleme klasörünün tamyolunu oluşturur;
+                                                                              //_he.WebRootPath kök klasör
+                    var ext = Path.GetExtension(files[0].FileName);//dosya uzantısını alır
+                    if (galeri.Image != null)// daha önce yüklenmiş dosya varsa
                     {
-                        var imagePath = Path.Combine(_he.WebRootPath, galeri.Image.TrimStart('\\'));
-                        if (System.IO.File.Exists(imagePath))
+                        var imagePath = Path.Combine(_he.WebRootPath, galeri.Image.TrimStart('\\'));//eski dosyanın tam yolunu oluşturur
+
+                        if (System.IO.File.Exists(imagePath))//dosya gerçektn var mı kontrol eder
                         {
-                            System.IO.File.Delete(imagePath);
+                            System.IO.File.Delete(imagePath);//varsa siler
                         }
                     }
-                    using (var filesStreams = new FileStream(Path.Combine(uploads, fileName + ext), FileMode.Create))
+                    using (var filesStreams = new FileStream(Path.Combine(uploads, fileName + ext), FileMode.Create)) //FileStream yeni bir dosya oluşturmak için
+                                                                                                                      //filemode create belirtilen bir dosya yolunda dosya oluşturur 
+                                                                                                                      //dosya zaten varsa dosya silinir ve üzerine yeni bir dosya eklenir
+                                                                                                                      //ext dosya uzantısı
+
+
                     {
-                        files[0].CopyTo(filesStreams);
+                        files[0].CopyTo(filesStreams);//copyto kullanıcın yüklediği hedef dosya kopyalanır
                     }
-                    galeri.Image = @"\Site\menu\" + fileName + ext;
+                    galeri.Image = @"\Site\menu\" + fileName + ext; //ımage klasörüne yeni dosya yolu atanır
                 }
-                _context.Add(galeri);
-                await _context.SaveChangesAsync();
+                _context.Add(galeri);//galeri nesnesi veritabanına eklenir
+                await _context.SaveChangesAsync();//veritabaı değişikliği kaydedilir
                 return RedirectToAction(nameof(Index));
             }
             return View(galeri);
@@ -127,8 +134,9 @@ namespace Cafe.Areas.Admin.Controllers
                     _context.Update(galeri);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
+                catch (DbUpdateConcurrencyException)//veri tabanı güncellemesi sırasında eşzamanlılık sorunları meydana geldiğinde
+                                                    //fırlatılan bir özel durumdur.
+				{
                     if (!GaleriExists(galeri.Id))
                     {
                         return NotFound();

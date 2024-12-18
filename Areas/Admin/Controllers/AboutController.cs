@@ -11,11 +11,11 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Cafe.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin")] //Url yapısı admin about sayfasına yönlendirmek için
+    [Authorize] //sadece yetkili kullanıcılar için
     public class AboutController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;//veritabanı bağlantısını yöneten sınıf
 
         public AboutController(ApplicationDbContext context)
         {
@@ -23,13 +23,13 @@ namespace Cafe.Areas.Admin.Controllers
         }
 
         // GET: Admin/About
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index()// abou tablosudaki tüm kayıtları veritabanından viewa gönderir
         {
-            return View(await _context.Abouts.ToListAsync());
+            return View(await _context.Abouts.ToListAsync());//senkronize bir şekilde kayıtları çeker  async: asenkron olarak tanmlar
         }
 
         // GET: Admin/About/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id)//görüntülenmek istenen about kaydının id si
         {
             if (id == null)
             {
@@ -37,32 +37,32 @@ namespace Cafe.Areas.Admin.Controllers
             }
 
             var about = await _context.Abouts
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);//belirtilen id ye sahip ilk kayıt
             if (about == null)
             {
                 return NotFound();
             }
 
-            return View(about);
+            return View(about);//bulunan kayıt view'a gönderilir
         }
 
         // GET: Admin/About/Create
         public IActionResult Create()
         {
-            return View();
+            return View();//yeni kayıt oluşturmak için form sayfasına döner
         }
 
         // POST: Admin/About/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title")] About about)
+        [HttpPost]//formdan veri gönderdiğinde çalşır
+        [ValidateAntiForgeryToken]//csrf saldırıları için güvenlik
+        public async Task<IActionResult> Create([Bind("Id,Title")] About about)//sadece belirtilen alanların modelde doldurulmasına izin verir
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid)//gönderilen verilerin doğru olup olmadığını kontrol eder
             {
-                _context.Add(about);
-                await _context.SaveChangesAsync();
+                _context.Add(about);//yeni kaydı veritabanına ekler
+                await _context.SaveChangesAsync();//veritabanına değişiklikleri kaydeder
                 return RedirectToAction(nameof(Index));
             }
             return View(about);
@@ -76,12 +76,12 @@ namespace Cafe.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var about = await _context.Abouts.FindAsync(id);
+            var about = await _context.Abouts.FindAsync(id);//veritabanında belirtilen ıd ye sahip kaydı getirir
             if (about == null)
             {
-                return NotFound();
+                return NotFound();//kayıt bulunmazsa 404
             }
-            return View(about);
+            return View(about);//buluursa about sayfasına döner
         }
 
         // POST: Admin/About/Edit/5
@@ -89,7 +89,7 @@ namespace Cafe.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title")] About about)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title")] About about)//task asenkron işlemini temsil eder
         {
             if (id != about.Id)
             {
@@ -100,10 +100,10 @@ namespace Cafe.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(about);
-                    await _context.SaveChangesAsync();
+                    _context.Update(about);//kayıt güncellenir
+                    await _context.SaveChangesAsync();//bir asenkron işlemin sonucunu bekler ardıan kaydeder
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException)//güncelleme sırasında başka bir işlem kaydı değiştirmişse hata yakalanır
                 {
                     if (!AboutExists(about.Id))
                     {
@@ -111,7 +111,7 @@ namespace Cafe.Areas.Admin.Controllers
                     }
                     else
                     {
-                        throw;
+                        throw; // hata fırlatır
                     }
                 }
                 return RedirectToAction(nameof(Index));
@@ -127,30 +127,31 @@ namespace Cafe.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var about = await _context.Abouts
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var about = await _context.Abouts  //_context= veri tabanına bağlamak için,Abouts vritabanındaki about sayfasını temsil eder
+                .FirstOrDefaultAsync(m => m.Id == id);//tablo içindeki kayıtları sorgular ve koşulu sağlayan ilk kaydı döndürür
+            //await burda işlemin bitmesini bekler bittikten sonra sonucu about değişkenine atar.
             if (about == null)
             {
                 return NotFound();
             }
 
             return View(about);
-        }
+        }//silmeden önce kulanıcıya silmek istediğinizden emin misiniz? onay ekranını gösterir
 
         // POST: Admin/About/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Delete")]//silme işlemini onaylamak için
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var about = await _context.Abouts.FindAsync(id);
-            _context.Abouts.Remove(about);
+            _context.Abouts.Remove(about);//kaydı silmek için
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index));//değişiklikler kaydedilir ve index sayfasına dönderilir
         }
 
         private bool AboutExists(int id)
         {
-            return _context.Abouts.Any(e => e.Id == id);
+            return _context.Abouts.Any(e => e.Id == id);//kayıt var mı yok mu diye kontrol yapar
         }
     }
 }
